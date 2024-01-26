@@ -1,0 +1,48 @@
+{
+  "name": "create-meteor-app",
+  "version": "1.0.0",
+  "description": "CLI for dataverse OS interaction",
+  "main": "dist/index.js",
+  "model": "dist/index.js",
+  "types": "dist/index.d.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf dist && npx tsc -p tsconfig.json",
+    "init": "npx node --experimental-specifier-resolution=node ./dist/index.js init",
+    "deploy": "npx node --experimental-specifier-resolution=node ./dist/index.js deploy",
+    "update": "npx node --experimental-specifier-resolution=node ./dist/index.js update",
+    "keypair": "npx node --experimental-specifier-resolution=node ./dist/index.js keypair"
+  },
+  "author": "meteor-web3",
+  "license": "MIT",
+  "dependencies": {
+    "@composedb/devtools": "^0.4.4",
+    "@meteor-web3/dapp-table-client": "^1.0.0",
+    "cartonne": "^2.2.0",
+    "chalk": "^4.1.2",
+    "commander": "11.0.0",
+    "crlf": "^1.1.1",
+    "dag-jose": "^4.0.0",
+    "ethers": "5",
+    "fs-extra": "^10.0.0",
+    "graphql": "16.6.0",
+    "graphql-request": "^6.1.0",
+    "https": "^1.0.0",
+    "readline-sync": "^1.4.10",
+    "semver": "^7.3.5",
+    "typescript": "^5.0.3",
+    "validate-npm-package-name": "^3.0.0"
+  },
+  "bin": {
+    "meteor": "./dist/index.js"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.1",
+    "@types/node": "^20.4.1",
+    "@types/readline-sync": "^1.4.4",
+    "@types/semver": "^7.5.0",
+    "@types/validate-npm-package-name": "^4.0.0",
+    "rimraf": "^5.0.5"
+  }
+}

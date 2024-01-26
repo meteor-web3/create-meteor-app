@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "target": "es2022",
+    "module": "es2022",
+    "lib": ["es2020"],
+    "types": ["node"],
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "outDir": "./dist/esm",
+    "forceConsistentCasingInFileNames": true,
+    "preserveSymlinks": true
+  },
+  "include": ["src/*.ts"],
+  "exclude": ["node_modules"]
+}

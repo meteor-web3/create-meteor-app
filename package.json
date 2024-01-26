@@ -1,0 +1,38 @@
+{
+  "name": "create-meteor-app",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "lerna run build",
+    "format": "prettier --config .prettierrc . --write",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meteor-web3/create-meteor-app.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meteor-web3/create-meteor-app/issues"
+  },
+  "homepage": "https://github.com/meteor-web3/create-meteor-app#readme",
+  "dependencies": {
+    "lerna": "^7.1.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.1.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint": "^8.45.0",
+    "prettier": "^3.0.0",
+    "husky": "^8.0.3",
+    "typescript": "^5.0.3"
+  }
+}

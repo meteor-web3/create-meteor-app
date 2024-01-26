@@ -1,0 +1,65 @@
+query GetFileSystemModels {
+  getFileSystemModels
+}
+
+query GetDapps($address: String, $limit: Int, $offset: Int) {
+  getDapps(address: $address, limit: $limit, offset: $offset) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    logo
+    website
+    defaultFolderName
+    description
+    feePoint
+    models {
+      modelName
+      internal
+      feePoint
+      streams {
+        modelId
+        createdAt
+        schema
+        isPublicDomain
+        encryptable
+        version
+        latest
+      }
+    }
+    address
+    ceramic
+  }
+}
+
+query GetDapp($dappId: String!) {
+  getDapp(id: $dappId) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    logo
+    website
+    defaultFolderName
+    description
+    feePoint
+    models {
+      modelName
+      internal
+      feePoint
+      streams {
+        modelId
+        createdAt
+        schema
+        isPublicDomain
+        encryptable
+        version
+        latest
+      }
+    }
+    address
+    ceramic
+  }
+}

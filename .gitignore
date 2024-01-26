@@ -1,0 +1,6 @@
+dist
+node_modules
+scripts/build
+pnpm-lock.yaml
+.env
+**/.DS_Store
