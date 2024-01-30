@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import chalk from "chalk/index.js";
+import chalk from "chalk";
 import fs from "fs-extra";
 import { Command } from "commander"; // (normal include)
 import { init } from "./init/index.js";

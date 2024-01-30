@@ -1,5 +1,5 @@
 import fs from "fs";
-import chalk from "chalk/index.js";
+import chalk from "chalk";
 import path from "path";
 import crlf from "crlf";
 import readlineSync from "readline-sync";
@@ -86,7 +86,10 @@ export async function getMutateDappProps(
       isPublicDomain: model.isPublicDomain,
       schema: models[model.schemaName],
       encryptable: model.encryptable,
-      feePoint: parseFloat(model.feeRatio) * 10000,
+      feePoint:
+        params.feeRatio || params.feeRatio === 0
+          ? parseFloat(params.feeRatio) * 10000
+          : null,
     };
   });
 
@@ -96,7 +99,10 @@ export async function getMutateDappProps(
     defaultFolderName: params.defaultFolderName,
     description: params.description,
     logo: params.logo,
-    feePoint: parseFloat(params.feeRatio) * 10000,
+    feePoint:
+      params.feeRatio || params.feeRatio === 0
+        ? parseFloat(params.feeRatio) * 10000
+        : null,
     models: params.models.concat(
       fileSystemModels.map((model: string) => {
         return {

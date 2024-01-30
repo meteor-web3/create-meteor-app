@@ -1,4 +1,4 @@
-import chalk from "chalk/index.js";
+import chalk from "chalk";
 import { writeToOutput } from "../base/tools.js";
 import { updateDapp } from "@meteor-web3/dapp-table-client";
 import { getMutateDappProps } from "../base/index.js";
