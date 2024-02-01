@@ -14,6 +14,7 @@ query GetDapps($address: String, $limit: Int, $offset: Int) {
     defaultFolderName
     description
     feePoint
+    environment
     models {
       modelName
       internal
@@ -33,8 +34,8 @@ query GetDapps($address: String, $limit: Int, $offset: Int) {
   }
 }
 
-query GetDapp($dappId: String!) {
-  getDapp(id: $dappId) {
+query GetDapp($dappId: String, $modelId: String, $hostname: String) {
+  getDapp(id: $dappId, modelId: $modelId, hostname: $hostname) {
     id
     createdAt
     updatedAt
@@ -45,6 +46,7 @@ query GetDapp($dappId: String!) {
     defaultFolderName
     description
     feePoint
+    environment
     models {
       modelName
       internal

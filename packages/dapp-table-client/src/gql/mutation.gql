@@ -10,6 +10,7 @@ mutation CreateDapp($input: DeployDappInput!, $message: Message!) {
     defaultFolderName
     description
     feePoint
+    environment
     models {
       modelName
       internal
@@ -45,6 +46,7 @@ mutation UpdateDapp(
     defaultFolderName
     description
     feePoint
+    environment
     models {
       modelName
       internal

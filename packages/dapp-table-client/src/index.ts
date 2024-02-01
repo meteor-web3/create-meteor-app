@@ -16,9 +16,17 @@ export async function getFileSystemModels(): Promise<Array<string>> {
   }
 }
 
-export async function getDapp(dappId: string): Promise<Dapp> {
+export async function getDapp({
+  dappId,
+  modelId,
+  hostname,
+}: {
+  dappId?: string;
+  modelId?: string;
+  hostname?: string;
+}): Promise<Dapp> {
   try {
-    const res = await getSdk(client).GetDapp({ dappId });
+    const res = await getSdk(client).GetDapp({ dappId, modelId, hostname });
     return res.getDapp;
   } catch (error: any) {
     throw error?.response?.errors?.[0] ?? error;

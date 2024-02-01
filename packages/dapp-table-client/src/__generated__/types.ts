@@ -26,6 +26,7 @@ export type Dapp = {
   deletedAt?: Maybe<Scalars['Float']['output']>;
   deprecated?: Maybe<Scalars['Boolean']['output']>;
   description: Scalars['String']['output'];
+  environment: Scalars['String']['output'];
   feePoint?: Maybe<Scalars['Int']['output']>;
   id: Scalars['String']['output'];
   logo: Scalars['String']['output'];
@@ -39,6 +40,7 @@ export type DeployDappInput = {
   ceramicUrl?: InputMaybe<Scalars['String']['input']>;
   defaultFolderName: Scalars['String']['input'];
   description: Scalars['String']['input'];
+  environment?: InputMaybe<Scalars['String']['input']>;
   feePoint?: InputMaybe<Scalars['Int']['input']>;
   logo: Scalars['String']['input'];
   models: Array<InputModel>;
@@ -98,6 +100,7 @@ export type RootQuery = {
 
 
 export type RootQueryGetDappArgs = {
+  hostname?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
   modelId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -120,7 +123,7 @@ export type CreateDappMutationVariables = Exact<{
 }>;
 
 
-export type CreateDappMutation = { __typename?: 'RootMutation', deployDapp: { __typename?: 'Dapp', id: string, createdAt: number, updatedAt: number, deletedAt?: number | null, name: string, logo: string, website: Array<string>, defaultFolderName: string, description: string, feePoint?: number | null, address: string, ceramic: string, models: Array<{ __typename?: 'Model', modelName: string, internal: boolean, feePoint?: number | null, streams: Array<{ __typename?: 'ModelStream', modelId: string, createdAt: number, schema: string, isPublicDomain: boolean, encryptable: Array<string>, version: number, latest: boolean }> }> } };
+export type CreateDappMutation = { __typename?: 'RootMutation', deployDapp: { __typename?: 'Dapp', id: string, createdAt: number, updatedAt: number, deletedAt?: number | null, name: string, logo: string, website: Array<string>, defaultFolderName: string, description: string, feePoint?: number | null, environment: string, address: string, ceramic: string, models: Array<{ __typename?: 'Model', modelName: string, internal: boolean, feePoint?: number | null, streams: Array<{ __typename?: 'ModelStream', modelId: string, createdAt: number, schema: string, isPublicDomain: boolean, encryptable: Array<string>, version: number, latest: boolean }> }> } };
 
 export type UpdateDappMutationVariables = Exact<{
   input: DeployDappInput;
@@ -129,7 +132,7 @@ export type UpdateDappMutationVariables = Exact<{
 }>;
 
 
-export type UpdateDappMutation = { __typename?: 'RootMutation', deployDapp: { __typename?: 'Dapp', id: string, createdAt: number, updatedAt: number, deletedAt?: number | null, name: string, logo: string, website: Array<string>, defaultFolderName: string, description: string, feePoint?: number | null, address: string, ceramic: string, models: Array<{ __typename?: 'Model', modelName: string, internal: boolean, feePoint?: number | null, streams: Array<{ __typename?: 'ModelStream', modelId: string, createdAt: number, schema: string, isPublicDomain: boolean, encryptable: Array<string>, version: number, latest: boolean }> }> } };
+export type UpdateDappMutation = { __typename?: 'RootMutation', deployDapp: { __typename?: 'Dapp', id: string, createdAt: number, updatedAt: number, deletedAt?: number | null, name: string, logo: string, website: Array<string>, defaultFolderName: string, description: string, feePoint?: number | null, environment: string, address: string, ceramic: string, models: Array<{ __typename?: 'Model', modelName: string, internal: boolean, feePoint?: number | null, streams: Array<{ __typename?: 'ModelStream', modelId: string, createdAt: number, schema: string, isPublicDomain: boolean, encryptable: Array<string>, version: number, latest: boolean }> }> } };
 
 export type GetFileSystemModelsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -143,14 +146,16 @@ export type GetDappsQueryVariables = Exact<{
 }>;
 
 
-export type GetDappsQuery = { __typename?: 'RootQuery', getDapps: Array<{ __typename?: 'Dapp', id: string, createdAt: number, updatedAt: number, deletedAt?: number | null, name: string, logo: string, website: Array<string>, defaultFolderName: string, description: string, feePoint?: number | null, address: string, ceramic: string, models: Array<{ __typename?: 'Model', modelName: string, internal: boolean, feePoint?: number | null, streams: Array<{ __typename?: 'ModelStream', modelId: string, createdAt: number, schema: string, isPublicDomain: boolean, encryptable: Array<string>, version: number, latest: boolean }> }> }> };
+export type GetDappsQuery = { __typename?: 'RootQuery', getDapps: Array<{ __typename?: 'Dapp', id: string, createdAt: number, updatedAt: number, deletedAt?: number | null, name: string, logo: string, website: Array<string>, defaultFolderName: string, description: string, feePoint?: number | null, environment: string, address: string, ceramic: string, models: Array<{ __typename?: 'Model', modelName: string, internal: boolean, feePoint?: number | null, streams: Array<{ __typename?: 'ModelStream', modelId: string, createdAt: number, schema: string, isPublicDomain: boolean, encryptable: Array<string>, version: number, latest: boolean }> }> }> };
 
 export type GetDappQueryVariables = Exact<{
-  dappId: Scalars['String']['input'];
+  dappId?: InputMaybe<Scalars['String']['input']>;
+  modelId?: InputMaybe<Scalars['String']['input']>;
+  hostname?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetDappQuery = { __typename?: 'RootQuery', getDapp: { __typename?: 'Dapp', id: string, createdAt: number, updatedAt: number, deletedAt?: number | null, name: string, logo: string, website: Array<string>, defaultFolderName: string, description: string, feePoint?: number | null, address: string, ceramic: string, models: Array<{ __typename?: 'Model', modelName: string, internal: boolean, feePoint?: number | null, streams: Array<{ __typename?: 'ModelStream', modelId: string, createdAt: number, schema: string, isPublicDomain: boolean, encryptable: Array<string>, version: number, latest: boolean }> }> } };
+export type GetDappQuery = { __typename?: 'RootQuery', getDapp: { __typename?: 'Dapp', id: string, createdAt: number, updatedAt: number, deletedAt?: number | null, name: string, logo: string, website: Array<string>, defaultFolderName: string, description: string, feePoint?: number | null, environment: string, address: string, ceramic: string, models: Array<{ __typename?: 'Model', modelName: string, internal: boolean, feePoint?: number | null, streams: Array<{ __typename?: 'ModelStream', modelId: string, createdAt: number, schema: string, isPublicDomain: boolean, encryptable: Array<string>, version: number, latest: boolean }> }> } };
 
 
 export const CreateDappDocument = gql`
@@ -166,6 +171,7 @@ export const CreateDappDocument = gql`
     defaultFolderName
     description
     feePoint
+    environment
     models {
       modelName
       internal
@@ -198,6 +204,7 @@ export const UpdateDappDocument = gql`
     defaultFolderName
     description
     feePoint
+    environment
     models {
       modelName
       internal
@@ -235,6 +242,7 @@ export const GetDappsDocument = gql`
     defaultFolderName
     description
     feePoint
+    environment
     models {
       modelName
       internal
@@ -255,8 +263,8 @@ export const GetDappsDocument = gql`
 }
     `;
 export const GetDappDocument = gql`
-    query GetDapp($dappId: String!) {
-  getDapp(id: $dappId) {
+    query GetDapp($dappId: String, $modelId: String, $hostname: String) {
+  getDapp(id: $dappId, modelId: $modelId, hostname: $hostname) {
     id
     createdAt
     updatedAt
@@ -267,6 +275,7 @@ export const GetDappDocument = gql`
     defaultFolderName
     description
     feePoint
+    environment
     models {
       modelName
       internal
@@ -306,7 +315,7 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     GetDapps(variables?: GetDappsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetDappsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetDappsQuery>(GetDappsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetDapps', 'query');
     },
-    GetDapp(variables: GetDappQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetDappQuery> {
+    GetDapp(variables?: GetDappQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetDappQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetDappQuery>(GetDappDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetDapp', 'query');
     }
   };
