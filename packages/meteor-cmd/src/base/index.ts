@@ -103,6 +103,7 @@ export async function getMutateDappProps(
       params.feeRatio || params.feeRatio === 0
         ? parseFloat(params.feeRatio) * 10000
         : null,
+    environment: "",
     models: params.models.concat(
       fileSystemModels.map((model: string) => {
         return {

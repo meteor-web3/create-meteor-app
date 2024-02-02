@@ -23,8 +23,9 @@ program
   .description("Init meteor project.")
   .arguments("<project-directory>")
   .usage(`${chalk.green("<project-directory>")} [options]`)
-  .action((projectName: string) => {
-    init(projectName, packageJson);
+  .option("-pwa, --pwa", "add pwa manifest")
+  .action((projectName: string, option: any) => {
+    init(projectName, packageJson, option);
   });
 
 program

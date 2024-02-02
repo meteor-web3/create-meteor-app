@@ -5,8 +5,10 @@ import semver from "semver";
 import validateProjectName from "validate-npm-package-name";
 import path from "path";
 import https from "https";
+import * as cheerio from "cheerio";
+import jsBeautify from "js-beautify";
 
-export async function init(projectName: string, packageJson: any) {
+export async function init(projectName: string, packageJson: any, option: any) {
   // check node version
   if (!semver.satisfies(semver.coerce(process.version)!, ">=16")) {
     console.log(
@@ -57,7 +59,7 @@ export async function init(projectName: string, packageJson: any) {
         console.log(chalk.grey(`   pnpm update -g ${packageJson.name}`));
         console.log();
       } else {
-        initApp(projectName);
+        initApp(projectName, option);
       }
     });
 
@@ -70,7 +72,7 @@ export async function init(projectName: string, packageJson: any) {
   }
 }
 
-function initApp(appName: string) {
+function initApp(appName: string, option: any) {
   checkAppName(appName);
 
   let root = process.cwd();
@@ -98,6 +100,8 @@ function initApp(appName: string) {
 
   const selectedFoler: string = "base";
   reconstructExampleCode(selectedFoler);
+
+  option.pwa && setPWAConfigs(appName);
 
   console.log(chalk.green("✅ Done!"));
   console.log("✨ To get started:");
@@ -194,4 +198,58 @@ function reconstructExampleCode(targetFolder: string) {
   });
 
   fs.rmSync(targetFolder, { recursive: true });
+}
+
+function setPWAConfigs(appName: string) {
+  const manifest = {
+    name: appName,
+    short_name: appName,
+    start_url: "/",
+    scope: "/",
+    display: "standalone",
+    background_color: "black",
+    theme_color: "white",
+    orientation: "portrait-primary",
+    description: `${appName} demo`,
+    icons: [
+      {
+        src: "./icon-32x32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+      {
+        src: "./icon-72x72.png",
+        sizes: "72x72",
+        type: "image/png",
+      },
+      {
+        src: "./icon-128x128.png",
+        sizes: "128x128",
+        type: "image/png",
+      },
+      {
+        src: "./icon-144x144.png",
+        sizes: "144x144",
+        type: "image/png",
+      },
+    ],
+  };
+  fs.writeFileSync("public/manifest.json", JSON.stringify(manifest, null, 2));
+
+  const html = fs.readFileSync("index.html");
+  const $ = cheerio.load(html);
+  const script = `<script>
+      const el = document.createElement("link");
+      el.setAttribute("rel", "manifest");
+      el.setAttribute("href", "manifest.json");
+      document.head.append(el);
+    </script>`;
+  $("body").append(script);
+  fs.writeFileSync(
+    "index.html",
+    jsBeautify
+      .html($.html())
+      .replaceAll("\n\n\n", "\n")
+      .replaceAll("\n\n", "\n"),
+  );
 }
