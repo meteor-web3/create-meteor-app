@@ -1,6 +1,6 @@
 {
   "name": "create-meteor-app",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "CLI for dataverse OS interaction",
   "main": "dist/index.js",
   "model": "dist/index.js",
