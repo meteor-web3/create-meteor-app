@@ -98,7 +98,7 @@ function initApp(appName: string, option: any) {
 
   console.log("🛟 Preparing...");
 
-  const selectedFoler: string = "base";
+  const selectedFoler: string = option.pwa ? "pwa" : "base";
   reconstructExampleCode(selectedFoler);
 
   option.pwa && setPWAConfigs(appName);
