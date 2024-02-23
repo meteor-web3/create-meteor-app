@@ -3,12 +3,17 @@ import chalk from "chalk";
 import path from "path";
 import crlf from "crlf";
 import readlineSync from "readline-sync";
-import { ethers } from "ethers";
+import { ethers, Contract, BigNumber, utils } from "ethers";
 import { gql } from "graphql-request";
 import { JSToYaml } from "./tools.js";
 import { CreateDappProps, Operation, UpdateDappProps } from "./types.js";
-import { createAbstractCompositeDefinition } from "@composedb/devtools";
+import { Composite } from "@composedb/devtools";
 import { client } from "@meteor-web3/dapp-table-client";
+import { CeramicClient } from "@ceramicnetwork/http-client";
+import { DID } from "dids";
+import { getResolver } from "key-did-resolver";
+import { Ed25519Provider } from "key-did-provider-ed25519";
+import { fromString } from "uint8arrays/from-string";
 
 export async function getMutateDappProps(
   operation: Operation,
@@ -59,18 +64,18 @@ export async function getMutateDappProps(
     throw new Error("Invalid app name");
   }
 
-  Object.keys(models).map(key => {
-    try {
-      createAbstractCompositeDefinition(models[key]);
-    } catch (error) {
-      console.log(
-        chalk.red(
-          `🚨 Error in ${key}: ${(error as Error).toString().split("\n")[0]}`,
-        ),
-      );
-      throw error;
-    }
-  });
+  // Object.keys(models).map(key => {
+  //   try {
+  //     createAbstractCompositeDefinition(models[key]);
+  //   } catch (error) {
+  //     console.log(
+  //       chalk.red(
+  //         `🚨 Error in ${key}: ${(error as Error).toString().split("\n")[0]}`,
+  //       ),
+  //     );
+  //     throw error;
+  //   }
+  // });
 
   console.log("🛫 Reading file system models...");
   let fileSystemModels: any;
@@ -93,6 +98,128 @@ export async function getMutateDappProps(
     };
   });
 
+  const resolver = getResolver();
+  const did = new DID({
+    resolver: resolver,
+    provider: new Ed25519Provider(fromString(privateKey, "base16")),
+  });
+  await did.authenticate();
+
+  const ceramic = new CeramicClient(
+    "https://testnet.dataverseceramicdaemon.com/",
+  );
+  ceramic.did = did;
+
+  const provider = new ethers.providers.JsonRpcProvider(
+    "https://polygon-mumbai.blockpi.network/v1/rpc/public",
+  );
+  const signer = new ethers.Wallet(privateKey, provider);
+  const abi = [
+    {
+      type: "function",
+      name: "getDeployerBalance",
+      inputs: [{ name: "deployer", type: "address", internalType: "address" }],
+      outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+      stateMutability: "view",
+    },
+    {
+      type: "function",
+      name: "getRegisterFee",
+      inputs: [],
+      outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+      stateMutability: "view",
+    },
+  ];
+  const contractAddress = "0x0Fa654E438163c899549acaB863178205607A88F";
+  const tokenUnit = "Matic";
+  const contract = new Contract(contractAddress, abi, signer);
+
+  const fee = await contract.getRegisterFee();
+  const balance = await contract.getDeployerBalance(address);
+
+  if (fee.gt(BigNumber.from("0")) && balance.lt(fee)) {
+    const walletBalance = await signer.getBalance();
+    console.log();
+    console.log(
+      chalk.blue(
+        `   Register fee: ${utils.formatEther(fee)} ${tokenUnit}
+   Contract Deployer balance: ${utils.formatEther(balance)} ${tokenUnit}`,
+      ),
+    );
+    console.log(chalk.red("🚨 Insufficient deployer balance"));
+    console.log();
+    console.log(
+      chalk.blue(
+        `   Wallet balance: ${utils.formatEther(walletBalance)} ${tokenUnit}`,
+      ),
+    );
+    if (walletBalance.lt(fee.sub(balance))) {
+      console.log(
+        chalk.red(
+          `🚨 Insufficient wallet balance to transfer ${utils.formatEther(
+            fee.sub(balance),
+          )} ${tokenUnit} to the dapp table registry contract to complete application deployment`,
+        ),
+      );
+      process.exit(0);
+    }
+
+    const res = readlineSync.question(
+      chalk.yellow(
+        `   This operation will transfer ${utils.formatEther(
+          fee.sub(balance),
+        )} ${tokenUnit} to the dapp table registry contract to complete application deployment. Enter (yes) and press enter to continue, enter another key to cancel: `,
+      ),
+    );
+
+    if (res === "yes") {
+      await signer.sendTransaction({
+        to: contractAddress,
+        value: fee.sub(balance),
+      });
+    } else {
+      process.exit(0);
+    }
+  } else {
+    const res = readlineSync.question(
+      chalk.yellow(
+        `   This operation will deduct ${utils.formatEther(
+          fee,
+        )} ${tokenUnit} from your contract deployer balance of the dapp table registry contract to complete application deployment. Enter (yes) and press enter to continue, enter another key to cancel: `,
+      ),
+    );
+    if (res !== "yes") {
+      process.exit(0);
+    }
+  }
+
+  const schemaModelIdRecord = Object.fromEntries(
+    await Promise.all(
+      params.models
+        .map((model: { schema: string }) => model.schema)
+        .concat(fileSystemModels)
+        .map(async (schema: string) => {
+          const composite = await Composite.create({
+            ceramic,
+            schema,
+            index: false,
+          });
+          return [
+            schema,
+            Object.keys(
+              composite.toJSON()["models" as keyof typeof composite],
+            )[0],
+          ];
+        }),
+    ),
+  );
+  // const composite = await Composite.create({
+  //   ceramic,
+  //   schema: jointSchema,
+  //   index: false,
+  // });
+  // console.log(JSON.stringify(composite.toJSON()));
+
   console.log("🚀 Generating dapp mutation params...");
 
   const input = {
@@ -103,22 +230,31 @@ export async function getMutateDappProps(
       params.feeRatio || params.feeRatio === 0
         ? parseFloat(params.feeRatio) * 10000
         : null,
-    environment: "",
-    models: params.models.concat(
-      fileSystemModels.map((model: string) => {
+    environment: null,
+    models: params.models
+      .map((model: { schema: string }) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return {
-          isPublicDomain: false,
-          schema: model,
-          encryptable: [],
-          feePoint: null,
+          ...model,
+          modelId: schemaModelIdRecord[model.schema],
         };
-      }),
-    ),
+      })
+      .concat(
+        fileSystemModels.map((model: string) => {
+          return {
+            isPublicDomain: false,
+            schema: model,
+            encryptable: [],
+            feePoint: null,
+            modelId: schemaModelIdRecord[model],
+          };
+        }),
+      ),
     name: params.name,
     website: params.website,
     ceramicUrl: params.ceramicUrl,
   };
-
+  console.log(input);
   const origin = convertToYaml(input)!;
 
   const signature = await signMessage(origin, privateKey);
@@ -127,6 +263,7 @@ export async function getMutateDappProps(
     return {
       input,
       message: {
+        did: did.id,
         origin,
         signature,
       },
