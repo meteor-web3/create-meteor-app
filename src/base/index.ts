@@ -106,7 +106,7 @@ export async function getMutateDappProps(
   await did.authenticate();
 
   const ceramic = new CeramicClient(
-    "https://testnet.dataverseceramicdaemon.com/",
+    params.ceramicUrl ?? "https://testnet.dataverseceramicdaemon.com/",
   );
   ceramic.did = did;
 
@@ -181,6 +181,12 @@ export async function getMutateDappProps(
       process.exit(0);
     }
   } else {
+    console.log(
+      chalk.blue(
+        `   Register fee: ${utils.formatEther(fee)} ${tokenUnit}
+   Contract Deployer balance: ${utils.formatEther(balance)} ${tokenUnit}`,
+      ),
+    );
     const res = readlineSync.question(
       chalk.yellow(
         `   This operation will deduct ${utils.formatEther(
@@ -254,7 +260,7 @@ export async function getMutateDappProps(
     website: params.website,
     ceramicUrl: params.ceramicUrl,
   };
-  console.log(input);
+
   const origin = convertToYaml(input)!;
 
   const signature = await signMessage(origin, privateKey);
